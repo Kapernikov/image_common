@@ -38,10 +38,10 @@
 #ifndef _CAMERA_INFO_MANAGER_H_
 #define _CAMERA_INFO_MANAGER_H_
 
-#include <ros/ros.h>
+#include <rclcpp/rclcpp.hpp>
 #include <boost/thread/mutex.hpp>
-#include <sensor_msgs/CameraInfo.h>
-#include <sensor_msgs/SetCameraInfo.h>
+#include <sensor_msgs/msg/camera_info.hpp>
+#include <sensor_msgs/srv/set_camera_info.hpp>
 
 /** @file
 
@@ -175,17 +175,17 @@ class CameraInfoManager
 {
  public:
 
-  CameraInfoManager(ros::NodeHandle nh,
+  CameraInfoManager(rclcpp::Node::SharedPtr nh,
                     const std::string &cname="camera",
                     const std::string &url="");
 
-  sensor_msgs::CameraInfo getCameraInfo(void);
+  sensor_msgs::msg::CameraInfo getCameraInfo(void);
   bool isCalibrated(void);
   bool loadCameraInfo(const std::string &url);
   std::string resolveURL(const std::string &url,
                          const std::string &cname);
   bool setCameraName(const std::string &cname);
-  bool setCameraInfo(const sensor_msgs::CameraInfo &camera_info);
+  bool setCameraInfo(const sensor_msgs::msg::CameraInfo &camera_info);
   bool validateURL(const std::string &url);
 
  private:
@@ -209,14 +209,15 @@ class CameraInfoManager
   bool loadCalibrationFile(const std::string &filename,
                            const std::string &cname);
   url_type_t parseURL(const std::string &url);
-  bool saveCalibration(const sensor_msgs::CameraInfo &new_info,
+  bool saveCalibration(const sensor_msgs::msg::CameraInfo &new_info,
                        const std::string &url,
                        const std::string &cname);
-  bool saveCalibrationFile(const sensor_msgs::CameraInfo &new_info,
+  bool saveCalibrationFile(const sensor_msgs::msg::CameraInfo &new_info,
                            const std::string &filename,
                            const std::string &cname);
-  bool setCameraInfoService(sensor_msgs::SetCameraInfo::Request &req,
-                            sensor_msgs::SetCameraInfo::Response &rsp);
+  bool setCameraInfoService(const std::shared_ptr<rmw_request_id_t> request_header,
+                            sensor_msgs::srv::SetCameraInfo::Request::SharedPtr req,
+                            sensor_msgs::srv::SetCameraInfo::Response::SharedPtr rsp);
 
   /** @brief mutual exclusion lock for private data
    *
@@ -229,11 +230,11 @@ class CameraInfoManager
   boost::mutex mutex_;
 
   // private data
-  ros::NodeHandle nh_;                  ///< node handle for service
-  ros::ServiceServer info_service_;     ///< set_camera_info service
+  rclcpp::Node::SharedPtr nh_;                  ///< node handle for service
+  rclcpp::Service<sensor_msgs::srv::SetCameraInfo>::SharedPtr info_service_;     ///< set_camera_info service
   std::string camera_name_;             ///< camera name
   std::string url_;                     ///< URL for calibration data
-  sensor_msgs::CameraInfo cam_info_;    ///< current CameraInfo
+  sensor_msgs::msg::CameraInfo cam_info_;    ///< current CameraInfo
   bool loaded_cam_info_;                ///< cam_info_ load attempted
 
 }; // class CameraInfoManager

@@ -1,14 +1,25 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 project(camera_info_manager)
 
-find_package(catkin REQUIRED COMPONENTS camera_calibration_parsers image_transport roscpp roslib sensor_msgs)
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+find_package(ament_cmake_python REQUIRED)
+find_package(ament_cmake_ros REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rcutils)
+find_package(builtin_interfaces REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(camera_calibration_parsers REQUIRED)
+find_package(image_transport REQUIRED)
 
 find_package(Boost)
-catkin_package(INCLUDE_DIRS include
-               LIBRARIES ${PROJECT_NAME}
-               CATKIN_DEPENDS camera_calibration_parsers
-               DEPENDS Boost roscpp sensor_msgs
-)
 
 include_directories(${catkin_INCLUDE_DIRS})
 include_directories(include)
@@ -17,13 +28,25 @@ include_directories(include)
 add_library(${PROJECT_NAME} src/camera_info_manager.cpp)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
+ament_target_dependencies(${PROJECT_NAME}
+  "rclcpp"
+  "rcutils"
+  "builtin_interfaces"
+  "sensor_msgs"
+  "camera_calibration_parsers"
+  "image_transport")
+
 install(TARGETS ${PROJECT_NAME}
-        DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        COMPONENT main
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin
 )
 install(DIRECTORY include/${PROJECT_NAME}/
-        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+        DESTINATION include
 )
+
+ament_package()
+
 
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest)
