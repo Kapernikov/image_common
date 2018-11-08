@@ -87,12 +87,14 @@ target_include_directories(${PROJECT_NAME} PUBLIC include ${PYTHON_INCLUDE_DIRS}
 
 # add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 
+
 install(
   TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
 )
+
 
 install(
   DIRECTORY "include/"
@@ -120,6 +122,12 @@ install(
 #install(TARGETS ${PROJECT_NAME}_wrapper
 #  DESTINATION "${PYTHON_INSTALL_DIR}/${PROJECT_NAME}"
 #)
+
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME})
+
+ament_package()
+
 
 if(CATKIN_ENABLE_TESTING)
   add_subdirectory(test)
