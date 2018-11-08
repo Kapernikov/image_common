@@ -33,7 +33,7 @@
 #include "camera_calibration_parsers/parse_wrapper.h"
 
 #include <boost/python.hpp>
-#include <ros/serialization.h>
+//#include <ros/serialization.h>
 
 namespace camera_calibration_parsers {
 
@@ -60,7 +60,7 @@ std::string to_python(const M& msg)
 boost::python::tuple readCalibrationWrapper(const std::string& file_name)
 {
   std::string camera_name;
-  sensor_msgs::CameraInfo camera_info;
+  sensor_msgs::msg::CameraInfo camera_info;
   bool result = readCalibration(file_name, camera_name, camera_info);
   std::string cam_info = to_python(camera_info);
   return boost::python::make_tuple(result, camera_name, cam_info);

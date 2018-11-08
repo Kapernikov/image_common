@@ -33,7 +33,9 @@
 *********************************************************************/
 
 #include "camera_calibration_parsers/parse.h"
-#include <ros/console.h>
+#include "rclcpp/rclcpp.hpp"
+
+#include <console_bridge/console.h>
 #include <cstdio>
 
 using namespace camera_calibration_parsers;
@@ -47,16 +49,16 @@ int main(int argc, char** argv)
   }
 
   std::string name;
-  sensor_msgs::CameraInfo cam_info;
+  sensor_msgs::msg::CameraInfo cam_info;
   if (!readCalibration(argv[1], name, cam_info)) {
-    ROS_ERROR("Failed to load camera model from file %s", argv[1]);
+    std::cerr << "Failed to load camera model from file %s" <<  argv[1] << std::endl;
     return -1;
   }
   if (!writeCalibration(argv[2], name, cam_info)) {
-    ROS_ERROR("Failed to save camera model to file %s", argv[2]);
+    std::cerr << "Failed to save camera model to file %s" << argv[2] << std::endl;
     return -1;
   }
   
-  ROS_INFO("Saved %s", argv[2]);
+  std::cerr << "Saved %s" <<  argv[2] << std::endl;
   return 0;
 }

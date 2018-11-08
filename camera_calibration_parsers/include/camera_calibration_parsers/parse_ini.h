@@ -36,7 +36,7 @@
 #define CAMERA_CALIBRATION_PARSERS_PARSE_INI_H
 
 #include <string>
-#include <sensor_msgs/CameraInfo.h>
+#include <sensor_msgs/msg/camera_info.hpp>
 
 namespace camera_calibration_parsers {
 
@@ -48,7 +48,7 @@ namespace camera_calibration_parsers {
  * \param cam_info Camera parameters
  */
 bool writeCalibrationIni(std::ostream& out, const std::string& camera_name,
-                         const sensor_msgs::CameraInfo& cam_info);
+                         const sensor_msgs::msg::CameraInfo& cam_info);
 
 /**
  * \brief Read calibration parameters from an INI file.
@@ -57,7 +57,7 @@ bool writeCalibrationIni(std::ostream& out, const std::string& camera_name,
  * \param[out] camera_name Name of the camera
  * \param[out] cam_info Camera parameters
  */
-bool readCalibrationIni(std::istream& in, std::string& camera_name, sensor_msgs::CameraInfo& cam_info);
+bool readCalibrationIni(std::istream& in, std::string& camera_name, sensor_msgs::msg::CameraInfo& cam_info);
 
 /**
  * \brief Write calibration parameters to a file in INI format.
@@ -67,7 +67,7 @@ bool readCalibrationIni(std::istream& in, std::string& camera_name, sensor_msgs:
  * \param cam_info Camera parameters
  */
 bool writeCalibrationIni(const std::string& file_name, const std::string& camera_name,
-                         const sensor_msgs::CameraInfo& cam_info);
+                         const sensor_msgs::msg::CameraInfo& cam_info);
 
 /**
  * \brief Read calibration parameters from an INI file.
@@ -77,7 +77,7 @@ bool writeCalibrationIni(const std::string& file_name, const std::string& camera
  * \param[out] cam_info Camera parameters
  */
 bool readCalibrationIni(const std::string& file_name, std::string& camera_name,
-                        sensor_msgs::CameraInfo& cam_info);
+                        sensor_msgs::msg::CameraInfo& cam_info);
 
 /**
  * \brief Parse calibration parameters from a string in memory of INI format.
@@ -87,7 +87,7 @@ bool readCalibrationIni(const std::string& file_name, std::string& camera_name,
  * \param[out] cam_info Camera parameters
  */
 bool parseCalibrationIni(const std::string& buffer, std::string& camera_name,
-                         sensor_msgs::CameraInfo& cam_info);
+                         sensor_msgs::msg::CameraInfo& cam_info);
 
 //bool readCalibrationIni
 

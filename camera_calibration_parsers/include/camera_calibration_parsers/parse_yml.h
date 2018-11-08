@@ -38,7 +38,7 @@
 #include <string>
 #include <istream>
 #include <ostream>
-#include <sensor_msgs/CameraInfo.h>
+#include <sensor_msgs/msg/camera_info.hpp>
 
 namespace camera_calibration_parsers {
 
@@ -50,7 +50,7 @@ namespace camera_calibration_parsers {
  * \param cam_info Camera parameters
  */
 bool writeCalibrationYml(std::ostream& out, const std::string& camera_name,
-                         const sensor_msgs::CameraInfo& cam_info);
+                         const sensor_msgs::msg::CameraInfo& cam_info);
 
 /**
  * \brief Read calibration parameters from a YAML file.
@@ -59,7 +59,7 @@ bool writeCalibrationYml(std::ostream& out, const std::string& camera_name,
  * \param[out] camera_name Name of the camera
  * \param[out] cam_info Camera parameters
  */
-bool readCalibrationYml(std::istream& in, std::string& camera_name, sensor_msgs::CameraInfo& cam_info);
+bool readCalibrationYml(std::istream& in, std::string& camera_name, sensor_msgs::msg::CameraInfo& cam_info);
 
 /**
  * \brief Write calibration parameters to a file in YAML format.
@@ -69,7 +69,7 @@ bool readCalibrationYml(std::istream& in, std::string& camera_name, sensor_msgs:
  * \param cam_info Camera parameters
  */
 bool writeCalibrationYml(const std::string& file_name, const std::string& camera_name,
-                         const sensor_msgs::CameraInfo& cam_info);
+                         const sensor_msgs::msg::CameraInfo& cam_info);
 
 /**
  * \brief Read calibration parameters from a YAML file.
@@ -79,7 +79,7 @@ bool writeCalibrationYml(const std::string& file_name, const std::string& camera
  * \param[out] cam_info Camera parameters
  */
 bool readCalibrationYml(const std::string& file_name, std::string& camera_name,
-                        sensor_msgs::CameraInfo& cam_info);
+                        sensor_msgs::msg::CameraInfo& cam_info);
 
 } //namespace camera_calibration_parsers
 

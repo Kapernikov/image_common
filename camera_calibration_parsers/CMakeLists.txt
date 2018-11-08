@@ -1,38 +1,50 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 project(camera_calibration_parsers)
 
-find_package(catkin REQUIRED sensor_msgs rosconsole roscpp roscpp_serialization)
+# Default to C99
+if(NOT CMAKE_C_STANDARD)
+  set(CMAKE_C_STANDARD 99)
+endif()
+
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(console_bridge REQUIRED)
+find_package(rclcpp REQUIRED)
+# find_package(rclcpp_serialization REQUIRED)
 
 find_package(PythonLibs REQUIRED)
-if(PYTHONLIBS_VERSION_STRING VERSION_LESS 3)
-  find_package(Boost REQUIRED COMPONENTS filesystem python)
-else()
-  find_package(Boost REQUIRED COMPONENTS filesystem python3)
-endif()
-include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS})
+find_package(PythonInterp REQUIRED)
+find_package(Boost REQUIRED COMPONENTS filesystem python)
+# include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS})
 
-catkin_python_setup()
 
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS sensor_msgs
-)
 
 find_package(PkgConfig)
+
+find_package(python_cmake_module REQUIRED)
+_ament_cmake_python_register_environment_hook()
 
 
 if (ANDROID)
     find_package(yaml-cpp)
     add_definitions(-DHAVE_NEW_YAMLCPP)
 else()
+find_package(yaml-cpp)
   pkg_check_modules(YAML_CPP yaml-cpp)
-  if(${YAML_CPP_VERSION} VERSION_GREATER 0.5)
     add_definitions(-DHAVE_NEW_YAMLCPP)
-  endif()
   link_directories(${YAML_CPP_LIBRARY_DIRS})
 endif()
-include_directories(${YAML_CPP_INCLUDE_DIRS})
+# include_directories(${YAML_CPP_INCLUDE_DIRS})
 
 # define the library
 add_library(${PROJECT_NAME}
@@ -41,42 +53,73 @@ add_library(${PROJECT_NAME}
   src/parse_yml.cpp
 )
 
-add_library(${PROJECT_NAME}_wrapper
-  src/parse_wrapper.cpp)
+#add_library(${PROJECT_NAME}_wrapper
+#  src/parse_wrapper.cpp)
 
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${YAML_CPP_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY})
-target_link_libraries(${PROJECT_NAME}_wrapper ${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+
+
+ament_target_dependencies(${PROJECT_NAME}
+    "rclcpp"
+    "rcutils"
+    "builtin_interfaces"
+    "sensor_msgs"
+    "console_bridge")
+
+target_link_libraries(${PROJECT_NAME} yaml-cpp ${Boost_LIBRARIES})
+#ament_target_dependencies(${PROJECT_NAME}_wrapper
+#    "rclcpp"
+#    "rcutils"
+#    "builtin_interfaces"
+#    "sensor_msgs"
+#    "console_bridge")
+
+target_include_directories(${PROJECT_NAME} PUBLIC include ${PYTHON_INCLUDE_DIRS})
+#target_include_directories(${PROJECT_NAME}_wrapper PUBLIC include ${PYTHON_INCLUDE_DIRS})
+    
+# ament_target_dependencies(${PROJECT_NAME} "sensor_msgs" "console_bridge" "rclcpp" ${YAML_CPP_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY})
+# ament_target_dependencies(${PROJECT_NAME}_wrapper ${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
 
 # Don't prepend wrapper library name with lib and add to Python libs.
-set_target_properties(${PROJECT_NAME}_wrapper PROPERTIES
-        PREFIX ""
-        LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}
-        )
+#set_target_properties(${PROJECT_NAME}_wrapper PROPERTIES
+#        PREFIX ""
+#        LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}
+#        )
 
-add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 
 install(
   TARGETS ${PROJECT_NAME}
-  DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  COMPONENT main
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
 )
+
 install(
-  DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  DIRECTORY "include/"
+  DESTINATION include
 )
 
 # define the exe to convert
 add_executable(convert src/convert.cpp)
-target_link_libraries(convert ${PROJECT_NAME} ${rosconsole_LIBRARIES})
+target_include_directories(convert PUBLIC include)
+
+ament_target_dependencies(convert ${PROJECT_NAME} 
+"rclcpp"
+"rcutils"
+"builtin_interfaces"
+"sensor_msgs"
+"console_bridge")
+
+target_link_libraries(convert ${PROJECT_NAME})
 
 install(
   TARGETS convert
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  DESTINATION bin
 )
 
-install(TARGETS ${PROJECT_NAME}_wrapper
-  DESTINATION ${CATKIN_PACKAGE_PYTHON_DESTINATION}
-)
+#install(TARGETS ${PROJECT_NAME}_wrapper
+#  DESTINATION "${PYTHON_INSTALL_DIR}/${PROJECT_NAME}"
+#)
 
 if(CATKIN_ENABLE_TESTING)
   add_subdirectory(test)
