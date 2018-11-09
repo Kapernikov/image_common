@@ -42,10 +42,10 @@ if (ANDROID)
     find_package(yaml-cpp)
     add_definitions(-DHAVE_NEW_YAMLCPP)
 else()
-find_package(yaml-cpp)
-  pkg_check_modules(YAML_CPP yaml-cpp)
+    find_package(yaml-cpp REQUIRED)
+    pkg_check_modules(YAML_CPP yaml-cpp)
     add_definitions(-DHAVE_NEW_YAMLCPP)
-  link_directories(${YAML_CPP_LIBRARY_DIRS})
+    link_directories(${YAML_CPP_LIBRARY_DIRS})
 endif()
 # include_directories(${YAML_CPP_INCLUDE_DIRS})
 
@@ -76,7 +76,7 @@ target_link_libraries(${PROJECT_NAME} yaml-cpp ${Boost_LIBRARIES})
 #    "sensor_msgs"
 #    "console_bridge")
 
-target_include_directories(${PROJECT_NAME} PUBLIC include ${PYTHON_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PUBLIC include ${YAML_CPP_INCLUDE_DIR})
 #target_include_directories(${PROJECT_NAME}_wrapper PUBLIC include ${PYTHON_INCLUDE_DIRS})
     
 # ament_target_dependencies(${PROJECT_NAME} "sensor_msgs" "console_bridge" "rclcpp" ${YAML_CPP_LIBRARIES} ${Boost_FILESYSTEM_LIBRARY})
