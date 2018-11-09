@@ -26,7 +26,7 @@ include_directories(include)
 
 # add a library
 add_library(${PROJECT_NAME} src/camera_info_manager.cpp)
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME})
 
 ament_target_dependencies(${PROJECT_NAME}
   "rclcpp"
