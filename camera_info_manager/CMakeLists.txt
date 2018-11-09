@@ -41,9 +41,12 @@ install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION lib
         RUNTIME DESTINATION bin
 )
-install(DIRECTORY include/${PROJECT_NAME}/
+install(DIRECTORY include/
         DESTINATION include
 )
+
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME})
 
 ament_package()
 
