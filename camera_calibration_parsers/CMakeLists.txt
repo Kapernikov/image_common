@@ -25,9 +25,9 @@ find_package(console_bridge REQUIRED)
 find_package(rclcpp REQUIRED)
 # find_package(rclcpp_serialization REQUIRED)
 
-find_package(PythonLibs REQUIRED)
-find_package(PythonInterp REQUIRED)
-find_package(Boost REQUIRED COMPONENTS filesystem python)
+# find_package(PythonLibs REQUIRED)
+# find_package(PythonInterp REQUIRED)
+find_package(Boost REQUIRED COMPONENTS filesystem) # python)
 # include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS})
 
 
